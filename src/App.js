@@ -23,13 +23,13 @@ class App extends Component {
 
   handleStationClick(station) {
     this.setState({ selectedStation: station, selectedStationArrivals: {} });
-    this.searchArrivals(station).then((data) => this.setState({ selectedStationArrivals: data.slice(0, this.settings.arrivalsLimit) }));
+    this.searchStationArrivals(station).then((data) => this.setState({ selectedStationArrivals: data.slice(0, this.settings.arrivalsLimit) }));
   }
 
   handleStationSearch(evt) {
     let name = evt.target.value;
     this.setState({ stationName: name, stationList: [], selectedStation: {} });
-    this.searchStation(evt.target.value).then((data) => this.setState({ stationList: data.matches }));
+    this.searchStationName(evt.target.value).then((data) => this.setState({ stationList: data.matches }));
   }
 
   fetchStationData(endpoint, params) {
@@ -49,13 +49,13 @@ class App extends Component {
       .catch((err) => console.log('error: ', err));
   }
 
-  searchStation(name) {
+  searchStationName(name) {
     let endpoint = this.settings.isProd ? `Stoppoint/Search/${name}` : 'mock-data.json';
     let param = ['modes=tube'];
     return this.fetchStationData(endpoint, param);
   }
 
-  searchArrivals(station) {
+  searchStationArrivals(station) {
     let endpoint = this.settings.isProd ? `Stoppoint/${station.id}/Arrivals` : 'mock-arrivals.json';
     return this.fetchStationData(endpoint);
   }
