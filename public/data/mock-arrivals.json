@@ -1,0 +1,33 @@
+[
+   {
+      "$type":"Tfl.Api.Presentation.Entities.Prediction, Tfl.Api.Presentation.Entities",
+      "id":"-720897286",
+      "operationType":1,
+      "vehicleId":"064",
+      "naptanId":"940GZZLUBKE",
+      "stationName":"Barkingside Underground Station",
+      "lineId":"central",
+      "lineName":"Central",
+      "platformName":"Inner Rail - Platform 2",
+      "direction":"outbound",
+      "bearing":"",
+      "destinationNaptanId":"940GZZLUHLT",
+      "destinationName":"Hainault Underground Station",
+      "timestamp":"2017-01-12T00:54:44Z",
+      "timeToStation":165,
+      "currentLocation":"Between Gants Hill and Newbury Park",
+      "towards":"Hainault via Newbury Park",
+      "expectedArrival":"2017-01-12T00:57:29.5437495Z",
+      "timeToLive":"2017-01-12T00:57:29.5437495Z",
+      "modeName":"tube",
+      "timing":{
+         "$type":"Tfl.Api.Presentation.Entities.PredictionTiming, Tfl.Api.Presentation.Entities",
+         "countdownServerAdjustment":"00:00:00",
+         "source":"0001-01-01T00:00:00",
+         "insert":"0001-01-01T00:00:00",
+         "read":"2017-01-12T00:54:30.301Z",
+         "sent":"2017-01-12T00:54:44Z",
+         "received":"0001-01-01T00:00:00"
+      }
+   }
+]

@@ -7,11 +7,20 @@ class App extends Component {
     this.handleStationClick = this.handleStationClick.bind(this);
     this.handleStationSearch = this.handleStationSearch.bind(this);
 
-    this.state = { stationName: '', stationList: [], selectedStation: {} };
+    this.state = {
+      stationName: '',
+      stationList: [],
+      selectedStation: {},
+      selectedStationArrivals: {}
+    };
   }
 
   handleStationClick(station) {
-    this.setState({ selectedStation: station });
+    this.setState({ selectedStation: station, selectedStationArrivals: {} });
+
+    this.searchArrivals(station).then((data) => {
+      this.setState({ selectedStationArrivals: data[0] });
+    });
   }
 
   handleStationSearch(evt) {
@@ -23,6 +32,17 @@ class App extends Component {
       this.setState({ stationList: data.matches });
     });
 
+  }
+
+  searchArrivals(station) {
+    console.log('search for: ', station.id)
+    return fetch('/public/data/mock-arrivals.json', { method: 'get' })
+      .then((res) => {
+        return res.json();
+      })
+      .catch((err) => {
+        console.log('error: ', err);
+      });
   }
 
   searchStation(name) {
@@ -43,6 +63,7 @@ class App extends Component {
         </div>
         <StationForm stationName={this.state.stationName} onChange={this.handleStationSearch} />
         <StationList stationList={this.state.stationList} selectedStation={this.state.selectedStation} onClick={this.handleStationClick} />
+        <StationArrivals selectedStationArrivals={this.state.selectedStationArrivals} />
       </div>
     );
   }
@@ -79,6 +100,24 @@ class StationList extends Component {
 
     return (
       <div>{stationList}</div>
+    );
+  }
+}
+
+class StationArrivals extends Component {
+  render() {
+    if(!this.props.selectedStationArrivals.hasOwnProperty('id')) {
+      return null;
+    }
+
+    const arrivalDetails = this.props.selectedStationArrivals;
+
+    return (
+      <div>
+        <h2>{arrivalDetails.destinationName}</h2>
+        <h3>Currently {arrivalDetails.currentLocation}</h3>
+        <p>Expected: {arrivalDetails.expectedArrival}</p>
+      </div>
     );
   }
 }
