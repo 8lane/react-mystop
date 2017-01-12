@@ -19,7 +19,8 @@ class App extends Component {
     this.setState({ selectedStation: station, selectedStationArrivals: {} });
 
     this.searchArrivals(station).then((data) => {
-      this.setState({ selectedStationArrivals: data[0] });
+      console.log('ARRIVALS ', data)
+      this.setState({ selectedStationArrivals: data });
     });
   }
 
@@ -35,8 +36,11 @@ class App extends Component {
   }
 
   searchArrivals(station) {
-    console.log('search for: ', station.id)
-    return fetch('/public/data/mock-arrivals.json', { method: 'get' })
+    const API_URL = process.env.NODE_ENV === 'development' ? process.env.REACT_APP_PROD_API_URL : process.env.REACT_APP_DEV_API_URL;
+    const API_ENDPOINT = process.env.NODE_ENV === 'development' ? `Stoppoint/${station.id}/Arrivals` : 'mock-arrivals.json';
+
+    return fetch(API_URL + API_ENDPOINT + `?app_id=${process.env.REACT_APP_PROD_API_ID}&app_key=${process.env.REACT_APP_PROD_API_KEY}`,
+      { method: 'get' })
       .then((res) => {
         return res.json();
       })
@@ -46,7 +50,11 @@ class App extends Component {
   }
 
   searchStation(name) {
-    return fetch('/public/data/mock-data.json', { method: 'get' })
+    const API_URL = process.env.NODE_ENV === 'development' ? process.env.REACT_APP_PROD_API_URL : process.env.REACT_APP_DEV_API_URL;
+    const API_ENDPOINT = process.env.NODE_ENV === 'development' ? `Stoppoint/Search/${name}` : 'mock-data.json';
+
+    return fetch(API_URL + API_ENDPOINT + `?modes=tube&app_id=${process.env.REACT_APP_PROD_API_ID}&app_key=${process.env.REACT_APP_PROD_API_KEY}`,
+      { method: 'get' })
       .then((res) => {
         return res.json();
       })
