@@ -1,0 +1,47 @@
+{
+   "$type":"Tfl.Api.Presentation.Entities.SearchResponse, Tfl.Api.Presentation.Entities",
+   "query":"Kings",
+   "total":3,
+   "matches":[
+      {
+         "$type":"Tfl.Api.Presentation.Entities.MatchedStop, Tfl.Api.Presentation.Entities",
+         "icsId":"1000129",
+         "modes":[
+            "national-rail",
+            "tube",
+            "international-rail",
+            "bus"
+         ],
+         "id":"HUBKGX",
+         "name":"King's Cross & St Pancras International",
+         "lat":51.531683,
+         "lon":-0.123538
+      },
+      {
+         "$type":"Tfl.Api.Presentation.Entities.MatchedStop, Tfl.Api.Presentation.Entities",
+         "icsId":"1000016",
+         "topMostParentId":"940GZZLUBKE",
+         "modes":[
+            "tube",
+            "bus"
+         ],
+         "id":"940GZZLUBKE",
+         "name":"Barkingside Underground Station",
+         "lat":51.585689,
+         "lon":0.088585
+      },
+      {
+         "$type":"Tfl.Api.Presentation.Entities.MatchedStop, Tfl.Api.Presentation.Entities",
+         "icsId":"1000128",
+         "topMostParentId":"940GZZLUKBY",
+         "modes":[
+            "tube",
+            "bus"
+         ],
+         "id":"940GZZLUKBY",
+         "name":"Kingsbury Underground Station",
+         "lat":51.584845,
+         "lon":-0.27879
+      }
+   ]
+}
