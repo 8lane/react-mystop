@@ -114,18 +114,23 @@ class StationList extends Component {
 
 class StationArrivals extends Component {
   render() {
-    if(!this.props.selectedStationArrivals.hasOwnProperty('id')) {
-      return null;
+    let arrivalEle = null;
+    const arrivals = this.props.selectedStationArrivals;
+
+    if(typeof arrivals === 'object' && Object.keys(arrivals).length) {
+      arrivalEle = arrivals.map((arrival) =>
+        <div key={arrival.id}>
+          <h2>{arrival.destinationName}</h2>
+          <h3>Currently {arrival.currentLocation}</h3>
+          <p>Expected: {arrival.expectedArrival}</p>
+        </div>
+      );
+    } else {
+      arrivalEle = <h3>Sorry, no arrival information available 🙁</h3>;
     }
 
-    const arrivalDetails = this.props.selectedStationArrivals;
-
     return (
-      <div>
-        <h2>{arrivalDetails.destinationName}</h2>
-        <h3>Currently {arrivalDetails.currentLocation}</h3>
-        <p>Expected: {arrivalDetails.expectedArrival}</p>
-      </div>
+      <div>{arrivalEle}</div>
     );
   }
 }
