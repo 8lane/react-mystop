@@ -15,7 +15,7 @@ class App extends Component {
     };
 
     this.settings = {
-      //isProd: true,
+      // isProd: true,
       isProd: process.env.NODE_ENV === 'production',
       arrivalsLimit: 2
     }
@@ -110,6 +110,11 @@ class StationList extends Component {
 }
 
 class StationArrivals extends Component {
+  formatEta(mins) {
+    let eta = Math.floor(mins / 60);
+    return eta === 0 ? `Due` : `${eta} min`;
+  }
+
   render() {
     let arrivalEle = null;
     const arrivals = this.props.selectedStationArrivals;
@@ -117,9 +122,8 @@ class StationArrivals extends Component {
     if(typeof arrivals === 'object' && Object.keys(arrivals).length) {
       arrivalEle = arrivals.map((arrival) =>
         <div key={arrival.id}>
-          <h2>{arrival.destinationName}</h2>
+          <h2>{arrival.destinationName} <small>{this.formatEta(arrival.timeToStation)}</small></h2>
           <h3>Currently {arrival.currentLocation}</h3>
-          <p>Expected: {arrival.expectedArrival}</p>
         </div>
       );
     } else {
