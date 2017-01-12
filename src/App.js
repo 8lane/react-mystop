@@ -15,6 +15,8 @@ class App extends Component {
     };
 
     this.settings = {
+      //isProd: true,
+      isProd: process.env.NODE_ENV === 'production',
       arrivalsLimit: 2
     }
   }
@@ -35,35 +37,34 @@ class App extends Component {
     this.searchStation(evt.target.value).then((data) => {
       this.setState({ stationList: data.matches });
     });
-
   }
 
-  searchArrivals(station) {
-    const API_URL = process.env.NODE_ENV === 'development' ? process.env.REACT_APP_PROD_API_URL : process.env.REACT_APP_DEV_API_URL;
-    const API_ENDPOINT = process.env.NODE_ENV === 'development' ? `Stoppoint/${station.id}/Arrivals` : 'mock-arrivals.json';
+  fetchStationData(endpoint, params) {
+    const API_URL = this.settings.isProd ? process.env.REACT_APP_PROD_API_URL : process.env.REACT_APP_DEV_API_URL;
+    const API_AUTH = `?app_id=${process.env.REACT_APP_PROD_API_ID}&app_key=${process.env.REACT_APP_PROD_API_KEY}`;
+    const API_ENDPOINT = endpoint;
 
-    return fetch(API_URL + API_ENDPOINT + `?app_id=${process.env.REACT_APP_PROD_API_ID}&app_key=${process.env.REACT_APP_PROD_API_KEY}`,
-      { method: 'get' })
-      .then((res) => {
-        return res.json();
-      })
-      .catch((err) => {
-        console.log('error: ', err);
-      });
+    let url = API_URL + API_ENDPOINT + API_AUTH; /* Build HTTP request URL */
+
+    if (params) {
+      url += `&${params.join('&')}`; /* Add additional query strings */
+    }
+
+    /* Fetch from TFL API */
+    return fetch(url, { method: 'get' })
+      .then((res) => res.json())
+      .catch((err) => console.log('error: ', err));
   }
 
   searchStation(name) {
-    const API_URL = process.env.NODE_ENV === 'development' ? process.env.REACT_APP_PROD_API_URL : process.env.REACT_APP_DEV_API_URL;
-    const API_ENDPOINT = process.env.NODE_ENV === 'development' ? `Stoppoint/Search/${name}` : 'mock-data.json';
+    let endpoint = this.settings.isProd ? `Stoppoint/Search/${name}` : 'mock-data.json';
+    let param = ['modes=tube'];
+    return this.fetchStationData(endpoint, param);
+  }
 
-    return fetch(API_URL + API_ENDPOINT + `?modes=tube&app_id=${process.env.REACT_APP_PROD_API_ID}&app_key=${process.env.REACT_APP_PROD_API_KEY}`,
-      { method: 'get' })
-      .then((res) => {
-        return res.json();
-      })
-      .catch((err) => {
-        console.log('error: ', err);
-      });
+  searchArrivals(station) {
+    let endpoint = this.settings.isProd ? `Stoppoint/${station.id}/Arrivals` : 'mock-arrivals.json';
+    return this.fetchStationData(endpoint);
   }
 
   render() {
@@ -103,8 +104,8 @@ class StationList extends Component {
 
     if(this.props.stationList.length) {
       stationList = this.props.stationList.map((station) =>
-                      <p key={station.id} className={this.isSelectedStation(station.id)} onClick={() => this.props.onClick(station)}>{station.name}</p>
-                    );
+        <p key={station.id} className={this.isSelectedStation(station.id)} onClick={() => this.props.onClick(station)}>{station.name}</p>
+      );
     } else {
       stationList = <p>No stations found, try searching!</p>;
     }
