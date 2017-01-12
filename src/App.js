@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import * as _ from 'lodash';
 import './App.css';
 
 class App extends Component {
@@ -120,7 +121,9 @@ class StationArrivals extends Component {
     const arrivals = this.props.selectedStationArrivals;
 
     if(typeof arrivals === 'object' && Object.keys(arrivals).length) {
-      arrivalEle = arrivals.map((arrival) =>
+      let sortedArrivals = _.sortBy(arrivals, 'timeToStation'); /* Re-order arrivals by time of arrival */
+
+      arrivalEle = sortedArrivals.map((arrival) =>
         <div key={arrival.id}>
           <h2>{arrival.destinationName} <small>{this.formatEta(arrival.timeToStation)}</small></h2>
           <h3>Currently {arrival.currentLocation}</h3>
