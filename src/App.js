@@ -12,10 +12,11 @@ class App extends Component {
   handleStationSearch(evt) {
     let name = evt.target.value;
 
-    this.setState({ stationName: name });
+    this.setState({ stationName: name, stationList: [] });
 
     this.searchStation(evt.target.value).then((data) => {
       this.setState({ stationList: data.matches });
+      console.log('STATE:', this.state)
     });
 
   }
@@ -56,14 +57,16 @@ class StationForm extends Component {
 
 class StationList extends Component {
   render() {
-    const stationList = this.props.stationList.map((station) =>
-      <p key={station.id}>{station.name}</p>
-    );
+    let stationList = null;
+
+    if(this.props.stationList.length) {
+      stationList = this.props.stationList.map((station) => <p key={station.id}>{station.name}</p> );
+    } else {
+      stationList = <p>No stations found, try searching!</p>;
+    }
 
     return (
-      <div>stations:
-      {stationList}
-      </div>
+      <div>{stationList}</div>
     );
   }
 }
