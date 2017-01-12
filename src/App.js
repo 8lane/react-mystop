@@ -4,9 +4,15 @@ import './App.css';
 class App extends Component {
   constructor(props) {
     super(props);
-    this.stationList = null;
+    this.handleStationClick = this.handleStationClick.bind(this);
     this.handleStationSearch = this.handleStationSearch.bind(this);
-    this.state = { stationName: '', stationList: [] };
+
+    this.state = { stationName: '', stationList: [], selectedStation: {} };
+  }
+
+  handleStationClick(station) {
+    this.setState({ selectedStation: station });
+    console.log('STATE:', this.state)
   }
 
   handleStationSearch(evt) {
@@ -38,7 +44,7 @@ class App extends Component {
           <h1>Welcome to My Stop</h1>
         </div>
         <StationForm stationName={this.state.stationName} onChange={this.handleStationSearch} />
-        <StationList stationList={this.state.stationList} />
+        <StationList stationList={this.state.stationList} onClick={this.handleStationClick} />
       </div>
     );
   }
@@ -60,7 +66,7 @@ class StationList extends Component {
     let stationList = null;
 
     if(this.props.stationList.length) {
-      stationList = this.props.stationList.map((station) => <p key={station.id}>{station.name}</p> );
+      stationList = this.props.stationList.map((station) => <p key={station.id} onClick={() => this.props.onClick(station)}>{station.name}</p> );
     } else {
       stationList = <p>No stations found, try searching!</p>;
     }
