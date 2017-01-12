@@ -12,17 +12,15 @@ class App extends Component {
 
   handleStationClick(station) {
     this.setState({ selectedStation: station });
-    console.log('STATE:', this.state)
   }
 
   handleStationSearch(evt) {
     let name = evt.target.value;
 
-    this.setState({ stationName: name, stationList: [] });
+    this.setState({ stationName: name, stationList: [], selectedStation: {} });
 
     this.searchStation(evt.target.value).then((data) => {
       this.setState({ stationList: data.matches });
-      console.log('STATE:', this.state)
     });
 
   }
@@ -44,7 +42,7 @@ class App extends Component {
           <h1>Welcome to My Stop</h1>
         </div>
         <StationForm stationName={this.state.stationName} onChange={this.handleStationSearch} />
-        <StationList stationList={this.state.stationList} onClick={this.handleStationClick} />
+        <StationList stationList={this.state.stationList} selectedStation={this.state.selectedStation} onClick={this.handleStationClick} />
       </div>
     );
   }
@@ -62,11 +60,19 @@ class StationForm extends Component {
 }
 
 class StationList extends Component {
+  isSelectedStation(id) {
+    if (this.props.selectedStation.id === id) {
+      return 'active';
+    }
+  }
+
   render() {
     let stationList = null;
 
     if(this.props.stationList.length) {
-      stationList = this.props.stationList.map((station) => <p key={station.id} onClick={() => this.props.onClick(station)}>{station.name}</p> );
+      stationList = this.props.stationList.map((station) =>
+                      <p key={station.id} className={this.isSelectedStation(station.id)} onClick={() => this.props.onClick(station)}>{station.name}</p>
+                    );
     } else {
       stationList = <p>No stations found, try searching!</p>;
     }
