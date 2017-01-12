@@ -23,20 +23,13 @@ class App extends Component {
 
   handleStationClick(station) {
     this.setState({ selectedStation: station, selectedStationArrivals: {} });
-
-    this.searchArrivals(station).then((data) => {
-      this.setState({ selectedStationArrivals: data.slice(0, this.settings.arrivalsLimit) });
-    });
+    this.searchArrivals(station).then((data) => this.setState({ selectedStationArrivals: data.slice(0, this.settings.arrivalsLimit) }));
   }
 
   handleStationSearch(evt) {
     let name = evt.target.value;
-
     this.setState({ stationName: name, stationList: [], selectedStation: {} });
-
-    this.searchStation(evt.target.value).then((data) => {
-      this.setState({ stationList: data.matches });
-    });
+    this.searchStation(evt.target.value).then((data) => this.setState({ stationList: data.matches }));
   }
 
   fetchStationData(endpoint, params) {
