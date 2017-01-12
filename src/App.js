@@ -13,14 +13,17 @@ class App extends Component {
       selectedStation: {},
       selectedStationArrivals: {}
     };
+
+    this.settings = {
+      arrivalsLimit: 2
+    }
   }
 
   handleStationClick(station) {
     this.setState({ selectedStation: station, selectedStationArrivals: {} });
 
     this.searchArrivals(station).then((data) => {
-      console.log('ARRIVALS ', data)
-      this.setState({ selectedStationArrivals: data });
+      this.setState({ selectedStationArrivals: data.slice(0, this.settings.arrivalsLimit) });
     });
   }
 
