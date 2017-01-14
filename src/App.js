@@ -26,6 +26,11 @@ class App extends Component {
     }
   }
 
+  componentDidMount() {
+    let lsStopData = JSON.parse(localStorage.getItem('ms_stopData'));
+    lsStopData && this.setState(lsStopData); /* update app state if we have a saved stop */
+  }
+
   handleStopSearch(evt) {
     let name = evt.target.value;
     this.setState({ stopName: name, stopList: [], selectedStop: {} });
@@ -34,12 +39,17 @@ class App extends Component {
 
   handleStopClick(stop) {
     this.setState({ selectedStop: stop, selectedStopArrivals: {} });
-    this.searchStopArrivals(stop).then((data) => this.setState({
-      selectedStopArrivals: data.slice(0, this.settings.arrivalsLimit),
-      wizard: {
-        currentStep: 2
-      }
-    }));
+    this.searchStopArrivals(stop).then((data) => {
+      let state = {
+        selectedStopArrivals: data.slice(0, this.settings.arrivalsLimit),
+        wizard: {
+          currentStep: 2
+        }
+      };
+
+      this.setState(state);
+      localStorage.setItem('ms_stopData', JSON.stringify(state));
+    });
   }
 
   handleStopChange(step) {
@@ -50,6 +60,8 @@ class App extends Component {
         currentStep: step // update wizard step
       }
     });
+
+    localStorage.removeItem('ms_stopData');
   }
 
   fetchStopData(endpoint, params) {
