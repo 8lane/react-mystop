@@ -5,14 +5,18 @@ import './App.css';
 class App extends Component {
   constructor(props) {
     super(props);
-    this.handleStationClick = this.handleStationClick.bind(this);
-    this.handleStationSearch = this.handleStationSearch.bind(this);
+    this.handleStopClick = this.handleStopClick.bind(this);
+    this.handleStopSearch = this.handleStopSearch.bind(this);
+    this.handleStopChange = this.handleStopChange.bind(this);
 
     this.state = {
-      stationName: '',
-      stationList: [],
-      selectedStation: {},
-      selectedStationArrivals: {}
+      stopName: '',
+      stopList: [],
+      selectedStop: {},
+      selectedStopArrivals: {},
+      wizard: {
+        currentStep: 1,
+      }
     };
 
     this.settings = {
@@ -22,18 +26,32 @@ class App extends Component {
     }
   }
 
-  handleStationClick(station) {
-    this.setState({ selectedStation: station, selectedStationArrivals: {} });
-    this.searchStationArrivals(station).then((data) => this.setState({ selectedStationArrivals: data.slice(0, this.settings.arrivalsLimit) }));
-  }
-
-  handleStationSearch(evt) {
+  handleStopSearch(evt) {
     let name = evt.target.value;
-    this.setState({ stationName: name, stationList: [], selectedStation: {} });
-    this.searchStationName(evt.target.value).then((data) => this.setState({ stationList: data.matches }));
+    this.setState({ stopName: name, stopList: [], selectedStop: {} });
+    this.searchStopName(evt.target.value).then((data) => this.setState({ stopList: data.matches }));
   }
 
-  fetchStationData(endpoint, params) {
+  handleStopClick(stop) {
+    this.setState({ selectedStop: stop, selectedStopArrivals: {} });
+    this.searchStopArrivals(stop).then((data) => this.setState({
+      selectedStopArrivals: data.slice(0, this.settings.arrivalsLimit),
+      wizard: {
+        currentStep: 2
+      }
+    }));
+  }
+
+  handleStopChange(step) {
+    this.setState({
+      selectedStop: {},
+      wizard: {
+        currentStep: step
+      }
+    });
+  }
+
+  fetchStopData(endpoint, params) {
     const API_URL = this.settings.isProd ? process.env.REACT_APP_PROD_API_URL : process.env.REACT_APP_DEV_API_URL;
     const API_AUTH = `?app_id=${process.env.REACT_APP_PROD_API_ID}&app_key=${process.env.REACT_APP_PROD_API_KEY}`;
     const API_ENDPOINT = endpoint;
@@ -50,26 +68,36 @@ class App extends Component {
       .catch((err) => console.log('error: ', err));
   }
 
-  searchStationName(name) {
+  searchStopName(name) {
     let endpoint = this.settings.isProd ? `Stoppoint/Search/${name}` : 'mock-data.json';
     let param = ['modes=tube'];
-    return this.fetchStationData(endpoint, param);
+    return this.fetchStopData(endpoint, param);
   }
 
-  searchStationArrivals(station) {
-    let endpoint = this.settings.isProd ? `Stoppoint/${station.id}/Arrivals` : 'mock-arrivals.json';
-    return this.fetchStationData(endpoint);
+  searchStopArrivals(stop) {
+    let endpoint = this.settings.isProd ? `Stoppoint/${stop.id}/Arrivals` : 'mock-arrivals.json';
+    return this.fetchStopData(endpoint);
   }
 
   render() {
+    let wizardContent = null;
+
+    if(this.state.wizard.currentStep === 1) {
+      wizardContent =
+      <div>
+        <StationForm stopName={this.state.stopName} onChange={this.handleStopSearch} />
+        <StationList stopList={this.state.stopList} selectedStop={this.state.selectedStop} onStopSelect={this.handleStopClick} />
+      </div>;
+    } else {
+      wizardContent = <div><StationArrivals selectedStopArrivals={this.state.selectedStopArrivals} onStopChange={this.handleStopChange} /></div>
+    }
+
     return (
       <div className="App">
         <div className="App-header">
           <h1>Welcome to My Stop</h1>
         </div>
-        <StationForm stationName={this.state.stationName} onChange={this.handleStationSearch} />
-        <StationList stationList={this.state.stationList} selectedStation={this.state.selectedStation} onClick={this.handleStationClick} />
-        <StationArrivals selectedStationArrivals={this.state.selectedStationArrivals} />
+        {wizardContent}
       </div>
     );
   }
@@ -80,32 +108,32 @@ class StationForm extends Component {
     return (
       <label htmlFor="station">
         Enter a station name:
-        <input id="station" value={this.props.stationName} onChange={this.props.onChange} />
+        <input id="station" value={this.props.stopName} onChange={this.props.onChange} />
       </label>
     );
   }
 }
 
 class StationList extends Component {
-  isSelectedStation(id) {
-    if (this.props.selectedStation.id === id) {
+  isSelectedStop(id) {
+    if (this.props.selectedStop.id === id) {
       return 'active';
     }
   }
 
   render() {
-    let stationList = null;
+    let stopList = null;
 
-    if(this.props.stationList.length) {
-      stationList = this.props.stationList.map((station) =>
-        <p key={station.id} className={this.isSelectedStation(station.id)} onClick={() => this.props.onClick(station)}>{station.name}</p>
+    if(this.props.stopList.length) {
+      stopList = this.props.stopList.map((stop) =>
+        <p key={stop.id} className={this.isSelectedStop(stop.id)} onClick={() => this.props.onStopSelect(stop)}>{stop.name}</p>
       );
     } else {
-      stationList = <p>No stations found, try searching!</p>;
+      stopList = <p>No stations found, try searching!</p>;
     }
 
     return (
-      <div>{stationList}</div>
+      <div>{stopList}</div>
     );
   }
 }
@@ -118,7 +146,7 @@ class StationArrivals extends Component {
 
   render() {
     let arrivalEle = null;
-    const arrivals = this.props.selectedStationArrivals;
+    const arrivals = this.props.selectedStopArrivals;
 
     if(typeof arrivals === 'object' && Object.keys(arrivals).length) {
       let sortedArrivals = _.sortBy(arrivals, 'timeToStation'); /* Re-order arrivals by time of arrival */
@@ -134,7 +162,10 @@ class StationArrivals extends Component {
     }
 
     return (
-      <div>{arrivalEle}</div>
+      <div>
+        <button onClick={() => this.props.onStopChange(1)}>Choose new stop</button>
+        <div>{arrivalEle}</div>
+      </div>
     );
   }
 }
