@@ -44,9 +44,10 @@ class App extends Component {
 
   handleStopChange(step) {
     this.setState({
-      selectedStop: {},
+      stopName: '', // Reset searched stop
+      selectedStop: {}, // Reset selected stop
       wizard: {
-        currentStep: step
+        currentStep: step // update wizard step
       }
     });
   }
@@ -94,9 +95,6 @@ class App extends Component {
 
     return (
       <div className="App">
-        <div className="App-header">
-          <h1>Welcome to My Stop</h1>
-        </div>
         {wizardContent}
       </div>
     );
