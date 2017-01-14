@@ -8,6 +8,7 @@ class App extends Component {
     this.handleStopClick = this.handleStopClick.bind(this);
     this.handleStopSearch = this.handleStopSearch.bind(this);
     this.handleStopChange = this.handleStopChange.bind(this);
+    this.handleStopRefresh = this.handleStopRefresh.bind(this);
 
     this.state = {
       stopName: '',
@@ -63,6 +64,10 @@ class App extends Component {
     localStorage.removeItem('ms_stopData');
   }
 
+  handleStopRefresh() {
+    this.handleStopClick(this.state.selectedStop);
+  }
+
   fetchStopData(endpoint, params) {
     const API_URL = this.settings.isProd ? process.env.REACT_APP_PROD_API_URL : process.env.REACT_APP_DEV_API_URL;
     const API_AUTH = `?app_id=${process.env.REACT_APP_PROD_API_ID}&app_key=${process.env.REACT_APP_PROD_API_KEY}`;
@@ -101,7 +106,7 @@ class App extends Component {
         <StationList stopList={this.state.stopList} selectedStop={this.state.selectedStop} onStopSelect={this.handleStopClick} />
       </div>;
     } else {
-      wizardContent = <div><StationArrivals selectedStopArrivals={this.state.selectedStopArrivals} onStopChange={this.handleStopChange} /></div>
+      wizardContent = <div><StationArrivals selectedStopArrivals={this.state.selectedStopArrivals} onStopChange={this.handleStopChange} onStopRefresh={this.handleStopRefresh} /></div>
     }
 
     return (
@@ -173,6 +178,7 @@ class StationArrivals extends Component {
     return (
       <div>
         <button onClick={() => this.props.onStopChange(1)}>Choose new stop</button>
+        <button onClick={this.props.onStopRefresh}>&#8635;</button>
         <div>{arrivalEle}</div>
       </div>
     );
