@@ -28,7 +28,7 @@ class App extends Component {
 
   componentDidMount() {
     let lsStopData = JSON.parse(localStorage.getItem('ms_stopData'));
-    lsStopData && this.setState(lsStopData); /* update app state if we have a saved stop */
+    lsStopData && this.handleStopClick(lsStopData); /* If we have a saved stop, load a fresh set of arrival info & update state */
   }
 
   handleStopSearch(evt) {
@@ -40,15 +40,14 @@ class App extends Component {
   handleStopClick(stop) {
     this.setState({ selectedStop: stop, selectedStopArrivals: {} });
     this.searchStopArrivals(stop).then((data) => {
-      let state = {
+      this.setState({
         selectedStopArrivals: data.slice(0, this.settings.arrivalsLimit),
         wizard: {
           currentStep: 2
         }
-      };
+      });
 
-      this.setState(state);
-      localStorage.setItem('ms_stopData', JSON.stringify(state));
+      localStorage.setItem('ms_stopData', JSON.stringify(stop));
     });
   }
 
