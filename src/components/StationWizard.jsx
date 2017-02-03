@@ -142,7 +142,12 @@ class StationWizard extends Component {
       wizardContent =
       <div>
         <StationForm stopName={this.state.stopName} onChange={this.handleStopSearch} />
-        <StationList stopList={this.state.stopList} selectedStop={this.state.selectedStop} onStopSelect={this.handleStopClick} />
+        <StationList stopName={this.state.stopName}
+          stopList={this.state.stopList}
+          selectedStop={this.state.selectedStop}
+          onStopSelect={this.handleStopClick}
+          settings={this.settings}
+        />
       </div>;
     }
 
@@ -153,6 +158,7 @@ class StationWizard extends Component {
     if(this.state.wizardCurrentStep === 3) {
       wizardContent = <div>
         <StationArrivals
+          isLoading={this.props.isLoading}
           selectedStopArrivals={this.state.selectedStopArrivals}
           selectedStopLines={this.state.selectedStopLines}
           onStopChange={this.handleStopChange}

@@ -34,7 +34,10 @@ class App extends Component {
     return (
       <main className="{appClasses}">
         <Loader isLoading={this.state.isLoading} />
-        <StationWizard onProcessing={this.handleProcessing} />
+        <StationWizard
+          isLoading={this.state.isLoading}
+          onProcessing={this.handleProcessing}
+        />
       </main>
     );
   }

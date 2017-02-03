@@ -9,19 +9,18 @@ class StationArrivals extends Component {
 
   render() {
     let arrivalEle = null;
-    const arrivals = this.props.selectedStopArrivals;
+    let arrivals = this.props.selectedStopArrivals;
 
     if(typeof arrivals === 'object' && Object.keys(arrivals).length) {
-      let sortedArrivals = _.sortBy(arrivals, 'timeToStation'); /* Re-order arrivals by time of arrival */
-
-      console.log(sortedArrivals)
-      arrivalEle = sortedArrivals.map((arrival) =>
+      arrivalEle = _.sortBy(arrivals, 'timeToStation').map((arrival) =>
         <div key={arrival.id}>
           <h2>{arrival.destinationName} <small>{this.formatEta(arrival.timeToStation)}</small></h2>
           <h3>Currently {arrival.currentLocation}</h3>
         </div>
       );
-    } else {
+    }
+
+    if(!arrivals && !this.props.isLoading) {
       arrivalEle = <h3>Sorry, no arrival information available 🙁</h3>;
     }
 
