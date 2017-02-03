@@ -4,7 +4,7 @@
   "private": true,
   "devDependencies": {
     "lodash": "^4.17.4",
-    "react-scripts": "0.8.5",
+    "react-scripts": "0.8.5"
   },
   "dependencies": {
     "classnames": "^2.2.5",
