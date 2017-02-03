@@ -28,6 +28,7 @@ class StationWizard extends Component {
     this.settings = {
       isProd: true,
       // isProd: process.env.NODE_ENV === 'production',
+      typeaheadMinLength: 3,
       arrivalsLimit: 4
     }
   }
@@ -43,7 +44,13 @@ class StationWizard extends Component {
 
   handleStopSearch(evt) {
     let name = evt.target.value;
+
     this.setState({ stopName: name, stopList: [], selectedStop: {} });
+
+    if(name.length < this.settings.typeaheadMinLength) {
+      return;
+    }
+
     this.searchStopName(evt.target.value).then((data) => this.setState({ stopList: data.matches }));
   }
 

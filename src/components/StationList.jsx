@@ -10,7 +10,7 @@ class StationList extends Component {
   render() {
     let stopList = null;
 
-    if(this.props.stopList.length) {
+    if(this.props.stopList && this.props.stopList.length) {
       stopList = this.props.stopList.map((stop) =>
         <p key={stop.id} className={this.isSelectedStop(stop.id)} onClick={() => this.props.onStopSelect(stop)}>{stop.name}</p>
       );
