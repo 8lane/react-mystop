@@ -14,6 +14,7 @@ class StationArrivals extends Component {
     if(typeof arrivals === 'object' && Object.keys(arrivals).length) {
       let sortedArrivals = _.sortBy(arrivals, 'timeToStation'); /* Re-order arrivals by time of arrival */
 
+      console.log(sortedArrivals)
       arrivalEle = sortedArrivals.map((arrival) =>
         <div key={arrival.id}>
           <h2>{arrival.destinationName} <small>{this.formatEta(arrival.timeToStation)}</small></h2>
