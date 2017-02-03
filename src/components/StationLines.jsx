@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 class StationLines extends Component {
   render() {
-    let lines = this.props.selectedStopLines.map((line) => <li key={line} onClick={() => this.props.onLineSelect(line)}>{line}</li> );
+    let lines = this.props.selectedStopLines.map((line) => <li key={line.lineId} onClick={() => this.props.onLineSelect(line)}>{line.lineName}</li> );
 
     return (
       <div>

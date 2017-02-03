@@ -57,10 +57,14 @@ class StationWizard extends Component {
   handleStopClick(stop) {
     this.setState({ selectedStop: stop, selectedStopArrivals: {} });
     this.searchStopArrivals(stop).then((data) => {
-      let stopLines = _.sortedUniq(data.map((arrival) => arrival.lineName));
-      let hasMultipleLines = stopLines.length > 1;
+      let stopLines = _.uniqBy(data.map((arrival) => {
+        return {
+          lineId: arrival.lineId,
+          lineName: arrival.lineName
+        }
+      }), 'lineId');
 
-      console.log('LINES: ', stopLines);
+      let hasMultipleLines = stopLines.length > 1;
 
       this.setState({
         selectedStopLines: stopLines,
@@ -90,7 +94,7 @@ class StationWizard extends Component {
   }
 
   handleLineClick(line) {
-    let arrivals = this.state.selectedStopArrivals.filter((arrival) => arrival.lineName === line);
+    let arrivals = this.state.selectedStopArrivals.filter((arrival) => arrival.lineId === line.lineId);
 
     this.setState({
       selectedStopArrivals: arrivals.slice(0, this.settings.arrivalsLimit),
