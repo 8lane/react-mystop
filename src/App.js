@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import * as _ from 'lodash';
+
+var classNames = require('classnames');
+
 import './App.css';
 
 class App extends Component {
@@ -15,14 +18,15 @@ class App extends Component {
       stopList: [],
       selectedStop: {},
       selectedStopArrivals: {},
+      isLoading: true,
       wizard: {
         currentStep: 1,
       }
     };
 
     this.settings = {
-      // isProd: true,
-      isProd: process.env.NODE_ENV === 'production',
+      isProd: true,
+      // isProd: process.env.NODE_ENV === 'production',
       arrivalsLimit: 2
     }
   }
@@ -30,6 +34,7 @@ class App extends Component {
   componentDidMount() {
     let lsStopData = JSON.parse(localStorage.getItem('ms_stopData'));
     lsStopData && this.handleStopClick(lsStopData); /* If we have a saved stop, load a fresh set of arrival info & update state */
+    this.setState({ isLoading: false });
   }
 
   handleStopSearch(evt) {
@@ -79,9 +84,17 @@ class App extends Component {
       url += `&${params.join('&')}`; /* Add additional query strings */
     }
 
+    this.setState({ isLoading: true }); /* Start loader */
+
     /* Fetch from TFL API */
     return fetch(url, { method: 'get' })
-      .then((res) => res.json())
+      .then((res) => {
+        setTimeout(() => {
+          this.setState({ isLoading: false }); /* End loader */
+        }, 3000);
+        //this.setState({ isLoading: false });
+        return res.json();
+      })
       .catch((err) => console.log('error: ', err));
   }
 
@@ -98,6 +111,8 @@ class App extends Component {
 
   render() {
     let wizardContent = null;
+    let loader = null;
+    let appClasses = null;
 
     if(this.state.wizard.currentStep === 1) {
       wizardContent =
@@ -109,12 +124,34 @@ class App extends Component {
       wizardContent = <div><StationArrivals selectedStopArrivals={this.state.selectedStopArrivals} onStopChange={this.handleStopChange} onStopRefresh={this.handleStopRefresh} /></div>
     }
 
+    if(this.state.isLoading) {
+      loader = <div className="ms-loader"><Loader /></div>
+    }
+
+    appClasses = classNames({
+      'ms-app': true,
+      'ms-app--loading': this.state.isLoading
+    });
+
     return (
-      <div className="App">
-        {wizardContent}
+      <div className="{appClasses}">
+        {loader}
+        <div className="ms-wizard">
+          {wizardContent}
+        </div>
       </div>
     );
   }
+}
+
+class Loader extends Component {
+    render() {
+      return (
+        <div>
+          loading...
+        </div>
+      );
+    }
 }
 
 class StationForm extends Component {
