@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import * as _ from 'lodash';
 
+import Loader from './components/AppLoader';
+import StationList from './components/StationList';
+import StationForm from './components/StationForm';
+import StationLines from './components/StationLines';
+import StationArrivals from './components/StationArrivals';
+
 var classNames = require('classnames');
 
 import './App.css';
@@ -142,7 +148,8 @@ class App extends Component {
           selectedStopArrivals={this.state.selectedStopArrivals}
           selectedStopLines={this.state.selectedStopLines}
           onStopChange={this.handleStopChange}
-          onStopRefresh={this.handleStopRefresh} />
+          onStopRefresh={this.handleStopRefresh}
+        />
       </div>
     }
 
@@ -161,97 +168,6 @@ class App extends Component {
         <div className="ms-wizard">
           {wizardContent}
         </div>
-      </div>
-    );
-  }
-}
-
-class Loader extends Component {
-    render() {
-      return (
-        <div>
-          loading...
-        </div>
-      );
-    }
-}
-
-class StationLines extends Component {
-  render() {
-    let lines = this.props.selectedStopLines.map((line) => <li key={line} onClick={() => this.props.onLineSelect(line)}>{line}</li> );
-
-    return (
-      <div>
-        <h3>Select a line</h3>
-        <ul>{lines}</ul>
-      </div>
-    );
-  }
-}
-
-class StationForm extends Component {
-  render() {
-    return (
-      <label htmlFor="station">
-        Enter a station name:
-        <input id="station" value={this.props.stopName} onChange={this.props.onChange} />
-      </label>
-    );
-  }
-}
-
-class StationList extends Component {
-  isSelectedStop(id) {
-    if (this.props.selectedStop.id === id) {
-      return 'active';
-    }
-  }
-
-  render() {
-    let stopList = null;
-
-    if(this.props.stopList.length) {
-      stopList = this.props.stopList.map((stop) =>
-        <p key={stop.id} className={this.isSelectedStop(stop.id)} onClick={() => this.props.onStopSelect(stop)}>{stop.name}</p>
-      );
-    } else {
-      stopList = <p>No stations found, try searching!</p>;
-    }
-
-    return (
-      <div>{stopList}</div>
-    );
-  }
-}
-
-class StationArrivals extends Component {
-  formatEta(mins) {
-    let eta = Math.floor(mins / 60);
-    return eta === 0 ? `Due` : `${eta} min`;
-  }
-
-  render() {
-    let arrivalEle = null;
-    const arrivals = this.props.selectedStopArrivals;
-
-    if(typeof arrivals === 'object' && Object.keys(arrivals).length) {
-      let sortedArrivals = _.sortBy(arrivals, 'timeToStation'); /* Re-order arrivals by time of arrival */
-
-      arrivalEle = sortedArrivals.map((arrival) =>
-        <div key={arrival.id}>
-          <h2>{arrival.destinationName} <small>{this.formatEta(arrival.timeToStation)}</small></h2>
-          <h3>Currently {arrival.currentLocation}</h3>
-        </div>
-      );
-    } else {
-      arrivalEle = <h3>Sorry, no arrival information available 🙁</h3>;
-    }
-
-    return (
-      <div>
-        <button onClick={() => this.props.onStopChange(1)}>Choose new stop</button>
-        <button onClick={this.props.onStopRefresh}>&#8635;</button>
-        <div>{arrivalEle}</div>
       </div>
     );
   }
